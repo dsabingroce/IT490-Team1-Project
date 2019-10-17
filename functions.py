@@ -8,11 +8,9 @@ def auth(username, password):
 	result=result.split('-')
 	result=result[255].split(' ')
 	result=result[0].split('\n')
-	if password==result[1]:
-		print 1		
+	if password==result[1]:	
 		return 1
-	else:
-		print 0		
+	else:	
 		return 0
 
 def addUser(username, password, fName, lName):
@@ -23,7 +21,11 @@ def addUser(username, password, fName, lName):
 	result=result[10].split('\n')
 	numrows=int(result[0])+1
 	query="sqlcmd -S localhost -U SA -P \'D3rz3tAbe!in\' -Q \"INSERT INTO accounts(userID, username, password, fName, lName) VALUES ("+str(numrows)+",\'"+username+"\',\'"+password+"\',\'"+fName+"\',\'"+lName+"\')\""
-	print subprocess.check_output(query, shell=True)
+	resp=subprocess.check_output(query, shell=True)	
+	if "Msg 2627" in resp:
+		print "Username already exists"
+	else:
+		print resp
 
 def addFriend(username, fUsername):
-	query="sqlcmd -S localhost -U SA -P \'D3rz3tAbe!in\' -Q \"
+	query="sqlcmd -S localhost -U SA -P \'D3rz3tAbe!in\' -Q \""
