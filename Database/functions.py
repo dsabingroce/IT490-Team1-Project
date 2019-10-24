@@ -109,10 +109,33 @@ def addFriend(user, friend):
 	else:
 		newFriends2=currFriends2+","+useID1	
 	#112-118: Updates the accounts with the new friends list
-	query3="UPDATE accounts SET friends="+newFriends1+" WHERE username='"+user+"'"
+	query3="UPDATE accounts SET friends='"+newFriends1+"' WHERE username='"+user+"'"
 	cursor.execute(query3)
 	connection.commit()
-	query4="UPDATE accounts SET friends="+newFriends2+" WHERE username='"+friend+"'"
+	query4="UPDATE accounts SET friends='"+newFriends2+"' WHERE username='"+friend+"'"
 	cursor.execute(query4)
 	connection.commit()
 	return "true"
+
+#121-141: showFriends gives the usernames of a person's friends
+def showFriends(user):
+	#123-127: Gets the friends string from the account and convert it into a list
+	query1="SELECT friends FROM accounts WHERE username='"+user+"'"
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+		friends=str(row[0])
+	friendList=friends.split(',')
+	#129-133: Iterates through the list to get the usernames and put them into the old list
+	for i in range(len(friendList)):
+		query="SELECT username FROM accounts WHERE userID='"+friendList[i]+"'"
+		with cursor.execute(query):
+			row=cursor.fetchone()
+			friendList[i]=str(row[0])	
+	#135-141: Iterates though the list again to put the values into a string to send to the front end
+	friendsShow=''	
+	for i in range(len(friendList)):
+		if friendsShow=='':
+			friendsShow=friendList[i]
+		else:
+			friendsShow=friendsShow+","+friendList[i]
+	return friendsShow
