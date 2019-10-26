@@ -158,3 +158,13 @@ def saveRoute(user, route):
 	cursor.execute(query2)
 	connection.commit()
 	return "true"
+
+#163-170: selectRoute returns a specific route based on which route the user wants
+def selectRoute(user, route):
+	#165-170: Gets the faveRoute list and selects which one based on the parameter route
+	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+		currRoutes=str(row[0])
+	currRoutes=currRoutes.split(',')
+	return currRoutes[route]
