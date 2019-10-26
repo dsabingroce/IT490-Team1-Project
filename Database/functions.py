@@ -41,7 +41,7 @@ def addUser(username, password, fName, lName):
 	count=row[0]+1
 	
 	#44-51: Inserts the user's row into the database
-	query2="INSERT INTO accounts VALUES ("+str(count)+",'"+username+"','"+password+"','"+fName+"','"+lName+"','',0,0,0,0,0,0,0,'',0)"
+	query2="INSERT INTO accounts VALUES ("+str(count)+",'"+username+"','"+password+"','"+fName+"','"+lName+"','',0,0,0,0,0,0,0,',,',',,')"
 	try:
 		cursor.execute(query2)
 		connection.commit()
@@ -139,3 +139,22 @@ def showFriends(user):
 		else:
 			friendsShow=friendsShow+","+friendList[i]
 	return friendsShow
+
+#144-160: saveRoute takes the time of a user's favorite route and replaces the one he first put in with the new one
+def saveRoute(user, route):
+    #146-154: Fetches the current faveRoute list and adds the new route to it and takes our the oldest		
+	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+		currRoutes=row[0]
+	currRoutes=currRoutes.split(',')
+	
+	currRoutes[0]=currRoutes[1]
+	currRoutes[1]=currRoutes[2]
+	currRoutes[2]=route
+	#156-160: Puts the newRoute list into the accounts table
+	newRoute=currRoutes[0]+","+currRoutes[1]+","+currRoutes[2]
+	query2="UPDATE accounts SET faveRoute='"+newRoute+"' WHERE username='"+user+"'"
+	cursor.execute(query2)
+	connection.commit()
+	return "true"
