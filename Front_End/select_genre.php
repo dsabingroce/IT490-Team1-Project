@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>chose genre</title>
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
@@ -166,7 +166,7 @@ echo "You will arrive in: " .$response. " seconds.";
 
 
 <?php
-/*
+
 
 	$check_genre = $_POST['country'];
 
@@ -183,7 +183,7 @@ $response = $rpc->call("$genre_check");
 echo $response;
 #echo "You will arrive in: " .$response. " seconds.";
 
-*/
+
 ?>
 
 </main>
