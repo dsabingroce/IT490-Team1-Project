@@ -140,9 +140,9 @@ def showFriends(user):
 			friendsShow=friendsShow+","+friendList[i]
 	return friendsShow
 
-#144-160: saveRoute takes the time of a user's favorite route and replaces the one he first put in with the new one
+#144-160: saveRoute takes the time of a user's favorite route and replaces the old one he first put in with the new one
 def saveRoute(user, route):
-    #146-154: Fetches the current faveRoute list and adds the new route to it and takes our the oldest		
+   	#146-154: Fetches the current faveRoute list and adds the new route to it and takes out the oldest		
 	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
@@ -168,3 +168,22 @@ def selectRoute(user, route):
 		currRoutes=str(row[0])
 	currRoutes=currRoutes.split(',')
 	return currRoutes[route]
+
+#173-189: savePlaylist takes the ID of a user's favorite playlist and replaces the old one he first put in with the new one
+def savePlaylist(user, playlist):
+	#175-183: Fetches the current favePlaylist list and adds the new playlist to it and takes out the oldest		
+	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+		currPlaylists=row[0]
+	currPlaylists=currPlaylists.split(',')
+	
+	currPlaylists[0]=currPlaylists[1]
+	currPlaylists[1]=currPlaylists[2]
+	currPlaylists[2]=playlist
+	#185-189: Puts the newPlaylists list into the accounts table
+	newPlaylists=currPlaylists[0]+","+currPlaylists[1]+","+currPlaylists[2]
+	query2="UPDATE accounts SET favePlaylist='"+newPlaylists+"' WHERE username='"+user+"'"
+	cursor.execute(query2)
+	connection.commit()
+	return "true"
