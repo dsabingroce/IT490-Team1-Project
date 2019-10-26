@@ -187,3 +187,13 @@ def savePlaylist(user, playlist):
 	cursor.execute(query2)
 	connection.commit()
 	return "true"
+
+#192-199: selectPlaylist returns a specific playlist based on which playlist the user wants
+def selectPlaylist(user, playlist):
+	#165-170: Gets the favePlaylist list and selects which one based on the parameter playlist
+	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+		currPlaylists=str(row[0])
+	currPlaylists=currPlaylists.split(',')
+	return currPlaylists[playlist]
