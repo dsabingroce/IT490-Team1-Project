@@ -17,6 +17,8 @@ channel.queue_declare(queue='DB_saveRoute', durable=True)
 channel.queue_declare(queue='DB_selectRoute', durable=True)
 channel.queue_declare(queue='DB_savePlaylist', durable=True)
 channel.queue_declare(queue='DB_selectPlaylist', durable=True)
+channel.queue_declare(queue='DB_showMessages', durable=True)
+channel.queue_declare(queue='DB_sendMessage', durable=True)
 
 user=''
 
@@ -114,6 +116,23 @@ def selectPlaylist_request(ch, method, props, body):
 	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
+def showMessages_request(ch, method, props, body):
+	global user	
+	print body
+	response = showMessages(user)
+	print response
+	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	ch.basic_ack(delivery_tag=method.delivery_tag)
+
+def sendMessage_request(ch, method, props, body):
+	global user	
+	print body
+	body=body.split("STARTOFMESSAGE")
+	response = sendMessage(user, body[0], body[1])
+	print response
+	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	ch.basic_ack(delivery_tag=method.delivery_tag)
+
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='DB_auth', on_message_callback=auth_request)
 channel.basic_consume(queue='DB_add', on_message_callback=add_request)
@@ -125,6 +144,8 @@ channel.basic_consume(queue='DB_saveRoute', on_message_callback=saveRoute_reques
 channel.basic_consume(queue='DB_selectRoute', on_message_callback=selectRoute_request)
 channel.basic_consume(queue='DB_savePlaylist', on_message_callback=savePlaylist_request)
 channel.basic_consume(queue='DB_selectPlaylist', on_message_callback=selectPlaylist_request)
+channel.basic_consume(queue='DB_showMessages', on_message_callback=showMessages_request)
+channel.basic_consume(queue='DB_sendMessage', on_message_callback=sendMessage_request)
 	
 print(' [x] Awaiting Authentication RPC requsts')
 db_log("Database server started")
