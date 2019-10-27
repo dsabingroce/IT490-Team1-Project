@@ -18,16 +18,16 @@ channel.queue_declare(queue='DB_selectRoute', durable=True)
 channel.queue_declare(queue='DB_savePlaylist', durable=True)
 channel.queue_declare(queue='DB_selectPlaylist', durable=True)
 
-user='test1'
+user=''
 
-def auth_request(ch, method, props, body):
-	global user	
+def auth_request(ch, method, props, body):			
 	username = body.split(',')[0]
 	password = body.split(',')[1]
 	print ("User="+username+" Password="+password)
 	response = auth(username, password)
 	print response
 	if response=='true':
+		global user
 		user=username
 	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -38,12 +38,13 @@ def add_request(ch, method, props, body):
 	fName = body.split(',')[2]
 	lName = body.split(',')[3]
 	print ("User="+uName+" Password="+pWord+" Firstname="+fName+" Lastname="+lName)
-	response = addUser(username, password, fName, lName)
+	response = addUser(uName, pWord, fName, lName)
 	print response
 	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def addScores_request(ch, method, props, body):
+	global user	
 	timeTrav = body.split(',')[0]
 	songLis = body.split(',')[1]
 	country = body.split(',')[2]
@@ -58,6 +59,7 @@ def addScores_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def showScores_request(ch, method, props, body):
+	global user	
 	print body
 	response = showScores(user)
 	print response
@@ -65,6 +67,7 @@ def showScores_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def addFriend_request(ch, method, props, body):
+	global user	
 	print body
 	response = addFriend(user, body)
 	print response
@@ -72,6 +75,7 @@ def addFriend_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def showFriends_request(ch, method, props, body):
+	global user	
 	print body
 	response = showFriends(user)
 	print response
@@ -79,6 +83,7 @@ def showFriends_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def saveRoute_request(ch, method, props, body):
+	global user	
 	print body
 	response = saveRoute(user, body)
 	print response
@@ -86,6 +91,7 @@ def saveRoute_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def selectRoute_request(ch, method, props, body):
+	global user	
 	print body
 	response = selectRoute(user, body)
 	print response
@@ -93,6 +99,7 @@ def selectRoute_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def savePlaylist_request(ch, method, props, body):
+	global user	
 	print body
 	response = savePlaylist(user, body)
 	print response
@@ -100,6 +107,7 @@ def savePlaylist_request(ch, method, props, body):
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def selectPlaylist_request(ch, method, props, body):
+	global user	
 	print body
 	response = selectPlaylist(user, body)
 	print response
@@ -119,4 +127,5 @@ channel.basic_consume(queue='DB_savePlaylist', on_message_callback=savePlaylist_
 channel.basic_consume(queue='DB_selectPlaylist', on_message_callback=selectPlaylist_request)
 	
 print(' [x] Awaiting Authentication RPC requsts')
+db_log("Database server started")
 channel.start_consuming()
