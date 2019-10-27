@@ -5,10 +5,10 @@ import time
 def db_log(message):
 	#Write log to local file
 	stamp = time.asctime( time.localtime(time.time()))
-	message = stamp + " -> " + message + "\n"
+	message = stamp + " -> " + message
 	
 	with open('./server_log', 'a') as log_file:
-		log_file.write(message)
+		log_file.write(message + "\n")
 	
 	#Send message to DB for logging
 	cred = pika.PlainCredentials('RMQ','RMQ_1234')
@@ -20,4 +20,3 @@ def db_log(message):
 	channel.basic_publish(exchange='DB_logs', routing_key='', body=message)
 
 	connection.close()
-	
