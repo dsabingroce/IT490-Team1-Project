@@ -242,7 +242,7 @@ def selectPlaylist(user, playlist):
 #243-253: showMessages shows all the messages a user has ever received
 def showMessages(user):
 	#245-248: Selects the users who sent the messages and the messages for a specific user
-	query1="SELECT fromUser, body FROM messages WHERE toUser='"+user+"'"
+	query1="SELECT fromUser, body FROM messages WHERE toUser='"+user+"' OR fromUser='"+user+"'"
 	resp=''	
 	with cursor.execute(query1):
 		row=cursor.fetchone()
