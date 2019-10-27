@@ -47,7 +47,7 @@ def auth(uName, pWord):
 	try: 
 		password=row[0]
 		if pWord==password:
-			db_log(uName+"logged in")			
+			db_log(uName+" logged in")			
 			return "true"
 		else:
 			db_log("User failed to log in")				
@@ -238,3 +238,16 @@ def selectPlaylist(user, playlist):
 	currPlaylists=currPlaylists.split(',')
 	db_log("User "+user+" checked his playlists")	
 	return currPlaylists[playlist]
+
+#243-253: showMessages shows all the messages a user has ever received
+def showMessages(user):
+	#245-248: Selects the users who sent the messages and the messages for a specific user
+	query1="SELECT fromUser, body FROM messages WHERE toUser='"+user+"'"
+	resp=''	
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+		#250-253: Adds the users and messages into a string that the Front End will receive		
+		while row:
+			resp=resp+str(row[0])+": "+row[1]+"ENDMESSAGE"
+			row=cursor.fetchone()
+	return resp
