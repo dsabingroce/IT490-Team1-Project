@@ -17,20 +17,14 @@ Remote Procedure Calls (RPCs) are a method of communication between machines tha
 ### Database
 The database code, which can be found in the "Database" folder, is written in Python, and uses several modules to communicate to and from the RMQ server and perform queries to the MySQL database. 
 
-#### Queries
-<The types of queries involved>
-
 ### DMZ
 The DMZ's purpose in this structure is to be the application's gateway to the internet. If the other servers were capable to connecting to the internet by themselves, that could be seen as a touchpoint or vulnerablilty. This server utilizes its connection to the internet to initiate communications with APIs. These APIs provide data that the application uses calculate and organize its playlists. 
 
-#### API Calls
-These two APIs are both considered Representational State Transfer (REST) APIs. The DMZ uses different URLs to specify a request for information. It then returns said information in a JSON format.   
+#### MapsQuest
+The application uses the REST API to make queries to the third party MapQuest database to receive travel times.
 
-##### MapsQuest
-
-
-##### Spotify
-
+#### Spotify
+The Spotify API is accessed through the spotipy Python module. 
 
 ### Front End Web Server
 This component for the application serves as the user interface. The front end is used to take input from the user and use it to send off requests to the other servers. That information is then received and presented back to the user.
@@ -61,5 +55,3 @@ After selecting a route, the user is prompted to select a genre. This genre will
 
 ##### Saved Playlists
 This page will display the three most recent playlists that were saved by the user. These playlists will appear in the form of links that lead to the playlist in spotify.   
-
-##### View Playlist
