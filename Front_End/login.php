@@ -1,5 +1,5 @@
-
 <?php
+header('Location: main_menu.html');
 
 require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -83,10 +83,17 @@ class RpcClient
     }
 }
 
-
-
 $rpc = new RpcClient();
 $response = $rpc->call("$user,$pass");
-echo ' [.] Got ', $response, "\n";
+echo $response;
+#echo ' [.] Got ', $response, "\n";
+
+if ($response == "true"){
+    header("Location: main_menu.html");
+}
+else{
+	header("Location: index.html");
+	echo "Wrong username or password. Please try again.";
+}
 
 ?>
