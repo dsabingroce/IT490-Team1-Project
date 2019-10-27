@@ -33,8 +33,33 @@ These two APIs are both considered Representational State Transfer (REST) APIs. 
 
 
 ### Front End Web Server
-This component for the application serves as the user interface. The front end is used to take input from the user and use it to send off requests to the other servers. That information is then received and presented back to the user. 
+This component for the application serves as the user interface. The front end is used to take input from the user and use it to send off requests to the other servers. That information is then received and presented back to the user.
 
 #### Pages
-<The pages and wireframe of the site>
+You can refer to the TravelTune_UIoutline.pdf in this repository to view the structure of the site. This file displays the flow for which the user should take to navigate around the site.
 
+##### Login and Registration Page
+These are meant for the user to authenicate with the database, allowing them to access information related to that user.
+
+##### Main Menu
+The main menu acts a the centralized directory for which the user can access all the other pages available to them in the application. 
+
+##### Social Page
+A page that queries the database for a list of the user's friends.  From here, the user can also add a friend to their list. If the user1 adds user2 to their friends list, user1 will now also appear on user2's friends list. 
+
+##### Scoreboard
+The scoreboard is meant to show the user statistics based on their usage of the application. This page lists off the total length of the playlists they have created, the total songs from the playlists they have created, as well as how often they have chosen a specific genre when creating a genre.
+
+##### Saved Playlists
+
+
+##### Create New Playlist
+
+
+##### Saved Routes
+
+
+##### Create New Routes
+
+
+##### View Playlist
