@@ -28,13 +28,19 @@ else:
     print("Can't get token for", username)
 
 #get tracks and saves as resutls 
-os.system('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=3&market=US&seed_genres=country" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer '+token+'"')
+os.system('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=10&market=US&seed_genres=country" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer '+token+'"')
 
-batcmd="cat seed.json | grep 'spotify:track' | sed 's/    \"uri\" : \"//g' | sed 's/\"//g'"
-results = subprocess.check_output(batcmd, shell=True)
+batcmd="cat seed.json | grep 'spotify:track' | sed 's/    \"uri\" : \"spotify:track://g' | sed 's/\"//g'"
+new = subprocess.check_output(batcmd, shell=True)
+
+results = new.split("\n")
+print(results)
+results.pop()
+results = list(dict.fromkeys(results))
+#print(results)
 
 #create playlist and saves as da_info
-name = "That bad bad 2"
+name = "That good good 3000"
 
 sp.user_playlist_create(username, name, public=True)
 
@@ -43,8 +49,12 @@ list_info = sp.user_playlists(username, limit=1, offset=0)
 da_info = list_info['items'][-1]['id']
 
 #add tracks and saves final link as final
-tracka = ["5TWhLgjy8cgb6CRPnnlnn2"]
-sp.user_playlist_add_tracks(username, da_info, tracka)
+#tracka = ["5TWhLgjy8cgb6CRPnnlnn2"]
+for i in range(len(results)):
+    results[i] = results[i].strip()
+
+#print(results)
+sp.user_playlist_add_tracks(username, da_info, results)
 
 final = "https://open.spotify.com/playlist/" + da_info
 
