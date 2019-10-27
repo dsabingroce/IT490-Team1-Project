@@ -250,4 +250,32 @@ def showMessages(user):
 		while row:
 			resp=resp+str(row[0])+": "+row[1]+"ENDMESSAGE"
 			row=cursor.fetchone()
+	db_log("User "+user+" checked his messages")		
 	return resp
+
+#257-281: sendMessage sends a message to a user, simple enough
+def sendMessage(fromUser, toUser, message):
+	#259-261: Makes sure the user does not send a message to nobody
+	if toUser=="":
+		db_log("User "+fromUser+" failed to send a message")			
+		return "false"
+	else:	
+		#264-274: Checks to see if the username entered exists
+		users=''	
+		query1="SELECT username FROM accounts"
+		with cursor.execute(query1):
+			row=cursor.fetchone()
+			while row:
+				users=users+row[0]+","
+				row=cursor.fetchone()
+		users=users.split(",")	
+		if toUser not in users:
+			db_log("User "+fromUser+" failed to send a message")			
+			return "false"
+		else:
+			#277-281: Enters the message into the database
+			query2="INSERT INTO messages (toUser, fromUser, body) VALUES (\'"+toUser+"\',\'"+fromUser+"\',\'"+message+"\')"
+			cursor.execute(query2)
+			connection.commit()
+			db_log("User "+fromUser+" sent a message to "+toUser)			
+			return 'true'
