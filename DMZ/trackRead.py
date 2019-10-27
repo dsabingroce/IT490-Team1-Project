@@ -12,3 +12,7 @@ results = subprocess.check_output(batcmd, shell=True)
 
 with open("tracks.py", "w") as f:
 	f.write(results)
+
+da = open("tracks.py").readlines()
+
+print(da)
