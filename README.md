@@ -50,16 +50,16 @@ A page that queries the database for a list of the user's friends.  From here, t
 ##### Scoreboard
 The scoreboard is meant to show the user statistics based on their usage of the application. This page lists off the total length of the playlists they have created, the total songs from the playlists they have created, as well as how often they have chosen a specific genre when creating a genre.
 
-##### Saved Playlists
-
-
-##### Create New Playlist
-
+##### Create New Routes
+On this page, the user can enter two locations that will then return with the ammount of time it takes to travel between these points by car. You can also check a box to save this route to your favorite routes. 
 
 ##### Saved Routes
+This pages displays all the three most recent routes that the user had chose to save. The user can click on one of these routes go create a playlist for that route.  There is also an option to create a new route from here.   
 
+##### Create New Playlist
+After selecting a route, the user is prompted to select a 
 
-##### Create New Routes
+##### Saved Playlists
 
 
 ##### View Playlist
