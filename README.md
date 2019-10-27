@@ -15,7 +15,7 @@ The Python scripts use the pika module to generate AMQP messages while the PHP s
 Remote Procedure Calls (RPCs) are a method of communication between machines that involve a request message followed by a response message in the opposite direction. This structure is accomplished by adding a "reply_to" and correlation id to the AMQP message itself. When a server recieves a message from a client, it processes information for its response. It sends this message to the "reply_to" queue that the client is listening on as it waits. The correlation id is to help the client distiguish what request this response is related to.      
 
 ### Database
-The database code, which can be found in the "Database" folder, is written in Python, and uses several modules to communicate to and from the RMQ server and perform queries to the MySQL database. 
+The database code, which can be found in the "Database" folder, is written in Python, and uses several modules to communicate to and from the RMQ server and perform queries to the MSSQL database. This server uses the pyodbc module to make queries and request information from the database.    
 
 ### DMZ
 The DMZ's purpose in this structure is to be the application's gateway to the internet. If the other servers were capable to connecting to the internet by themselves, that could be seen as a touchpoint or vulnerablilty. This server utilizes its connection to the internet to initiate communications with APIs. These APIs provide data that the application uses calculate and organize its playlists. 
