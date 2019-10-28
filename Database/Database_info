@@ -1,0 +1,24 @@
+Database: projectDB
+Table: accounts
+
+userID int not null primary key
+username varchar(20) unique
+password varchar(20)
+fName varchar(20)
+lName varchar(20)
+friends varchar(255)
+timeTraveled int
+songsListenedTo int
+pop int
+rock int
+country int
+hipHop int
+edm int
+favePlaylist varchar(255)
+faveRoute varchar(255)
+
+Table: messages
+
+toUser int
+fromUser int
+body varchar(255)
