@@ -121,10 +121,12 @@ class RpcClient
 
 $rpc = new RpcClient();
 $response = $rpc->call("$username,$pass,$fname,$lname");
-echo ' [.] Got ', $response, "\n";
+echo $response;
+if ($response == "true"){
+    header("Location: index.html");
+	
+}
+
+
+
 ?>
-
-
-</div>
-</body>
-</html>
