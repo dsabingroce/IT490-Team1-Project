@@ -120,22 +120,31 @@ class RpcClient
 
 
 
+##############################################################
 $rpc = new RpcClient();
 $response = $rpc->call("$location");
 
 #echo $response;
-echo "You will arrive in: " .$response. " seconds.";
-
+$total_minutes = gmdate("H:i:s", $response);
+echo "You will arrive in " .$total_minutes. " minutes.";
 
 
 
 ?>
 
 	<center>
-            <h1>Next: Select Genre</h1>
-            <form action ="Your_playlist.php" method="post">
 
-                <table>
+	<form action ="Your_playlist.php" method="post">
+	<h1>Enter name of new playlist:</h1>
+<input type="text" name="name_of_playlist" id="name_of_playlist" placeholder="Name the playlist">
+
+
+	<table>
+<!------------------------------------------------------------------>
+            <h1>Select Genre</h1>
+            
+
+              <!--  <table> -->
                     <tr>
                         <td>Country:</td>
                         <td><input type="checkbox" value="true" id="country_music" name="country"></td>
@@ -163,7 +172,7 @@ echo "You will arrive in: " .$response. " seconds.";
 
                 </table>
                 <input type="submit" name="submit" value="submit">
-                <input type="button" onclick="location.href='new_route.html';"value='back' />
+                <input type="button" onclick="location.href='new_route.php';"value='back' />
 
             </form>
         </center>
