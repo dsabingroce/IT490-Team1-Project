@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +16,7 @@
 
 <?php
 
+	$name_of_playlist = $_POST['name_of_playlist'];
 
 	$genre_country = $_POST['country'];
 	$genre_hip_hop = $_POST['hip-hop'];
@@ -42,7 +44,8 @@ else{
 }
 
 
-$genre_check = ('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=3&market=US&seed_genres='.$music_type.'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer BQBDWNIvHLwuc7ajJNs_0j3Yx-O2kgof6QUB7wACJUeE6f2kNfJ4cSVF7uKzXZr80DB0xy2gGklJwOjDj29k_prSX6PaRrDwJRSWYwAhBT7e0qTU6RXyo9BQIHlm4AZ8cQhaZEXSKZNMw5JXUdJD_QIJ_7Bjj8LHq-l5SyUeCKl6ic8"');
+$genre_check = ('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=3&market=US&seed_genres='.$music_type.'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer BQAJOm4rnh-AQA6FSYVQDOp4yz2R0vx1vk_buPemDsiYkD-eHh25luMIaVqXNuVm0jb2x_aRkU03p5DPILpoxgXwuasZbf7mdTtRByyKtQ5OYdMotbskXvN30dndCp3TJjjRU5-eisdbHXfDpFoZpQGYwLMOLizRIHWAaqYPzqBDPxU"');
+
 
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -107,21 +110,27 @@ class RpcClient
             )
         );
         $this->channel->basic_publish($msg, '', 'DMZ_genre');
-        /*
+        
 	while (!$this->response) {
             $this->channel->wait();
         }
 		return ($this->response);
-	*/
+	
         return ($this->test);
     }
 }
 
-$rpc = new RpcClient();
-$response = $rpc->call("$genre_check");
 
+
+
+
+$rpc = new RpcClient();
+#$response = $rpc->call("$genre_check");
+$response = $rpc->call("$music_type,$name_of_playlist");
+
+echo "Please visit the url:   ";
 echo $response;
-#echo "You will arrive in: " .$response. " seconds.";
+
 
 
 ?>
