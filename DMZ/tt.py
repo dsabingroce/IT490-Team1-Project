@@ -6,7 +6,8 @@ import os
 import json
 from pprint import pprint 
 import subprocess
-
+from log import *
+time = 0
 ftime = 0
  
 script = 'curl -o new.json -d @location.json -H "Content-Type: application/json" http://www.mapquestapi.com/directions/v2/routematrix?key=8PtZTD2kqepePZgyZPkbfg7Q6EhkUvcP'
@@ -22,6 +23,7 @@ channel.queue_declare(queue='DMZ_genre', durable=True)
 
 #get time from Map API
 def on_request_route(ch, method, props, body):
+    global time
     global ftime
     print(body)
     os.system("echo "+body+" > location.json")  
@@ -68,6 +70,7 @@ else:
     print("Can't get token for", username)
 
 def on_request_genre(ch, method, props,stuff):
+    global time
     global ftime
     stuff = stuff.split(",")
     genre = stuff[0]
@@ -113,6 +116,38 @@ def on_request_genre(ch, method, props,stuff):
                      body=str(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
     print("message sent")
+    
+    if genre == 'country':
+      da_country = 1
+    else:
+      da_country = 0
+
+    if genre == 'edm':
+      da_edm = 1
+    else:
+      da_edm = 0
+
+    if genre == 'hip-hop':
+      da_hiphop = 1
+    else:
+      da_hiphop = 0
+
+    if genre == 'pop':
+      da_pop = 1
+    else:
+      da_pop = 0
+
+    if genre == 'rock':
+      da_rock = 1
+    else:
+      da_rock = 0
+
+    scoreboard = "{},{},{},{},{},{},{}".format(time[1], ftime, da_country, da_edm, da_hiphop, da_pop, da_rock)
+
+    print (scoreboard)
+
+    channel.exchange_declare(exchange='DB_addScores', exchange_type='direct', durable=True)
+    channel.basic_publish(exchange='DB_addScores', routing_key='', body=scoreboard)
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='DMZ_route', on_message_callback=on_request_route)
