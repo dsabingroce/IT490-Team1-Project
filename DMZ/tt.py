@@ -7,6 +7,8 @@ import json
 from pprint import pprint 
 import subprocess
 
+ftime = 0
+ 
 script = 'curl -o new.json -d @location.json -H "Content-Type: application/json" http://www.mapquestapi.com/directions/v2/routematrix?key=8PtZTD2kqepePZgyZPkbfg7Q6EhkUvcP'
 
 cred=pika.PlainCredentials('DMZ', 'DMZ_1234')
@@ -20,6 +22,7 @@ channel.queue_declare(queue='DMZ_genre', durable=True)
 
 #get time from Map API
 def on_request_route(ch, method, props, body):
+    global ftime
     print(body)
     os.system("echo "+body+" > location.json")  
 
@@ -29,6 +32,8 @@ def on_request_route(ch, method, props, body):
     	data = json.load(f)
 
     time = data["time"]
+
+    ftime = ((time[1] / 60) / 3)
 
     pprint(time[1])
 
@@ -40,6 +45,7 @@ def on_request_route(ch, method, props, body):
                                                          props.correlation_id),
                      body=str(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
+
 
 #spotify authentication
 cid ='d874f49748c84696b9015d3c3d1bbcae' # Client ID; copy this from your app 
@@ -61,14 +67,15 @@ if token:
 else:
     print("Can't get token for", username)
 
-def on_request_genre(ch, method, props, stuff):
+def on_request_genre(ch, method, props,stuff):
+    global ftime
     stuff = stuff.split(",")
     genre = stuff[0]
     name = stuff[1]
     #get tracks and saves as resutls 
     print(genre)
     print(name)
-    os.system('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=3&market=US&seed_genres='+genre+'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer '+token+'"')
+    os.system('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit='+str(ftime)+'&market=US&seed_genres='+genre+'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer '+token+'"')
 
     batcmd="cat seed.json | grep 'spotify:track' | sed 's/    \"uri\" : \"//g' | sed 's/\"//g'"
     new = subprocess.check_output(batcmd, shell=True)
@@ -96,6 +103,17 @@ def on_request_genre(ch, method, props, stuff):
 
     #print link
     print(final)
+
+    response = final
+
+    ch.basic_publish(exchange='',
+                     routing_key=props.reply_to,
+                     properties=pika.BasicProperties(correlation_id = \
+                                                         props.correlation_id),
+                     body=str(response))
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+    print("message sent")
+
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='DMZ_route', on_message_callback=on_request_route)
 channel.basic_consume(queue='DMZ_genre', on_message_callback=on_request_genre)
