@@ -94,7 +94,7 @@ $rpc = new RpcClient();
 $response = $rpc->call("$add_friend");
 
 
-header('Location: social.php');
+header("Location: social.php?status=$response");
 		
 
 
