@@ -9,6 +9,8 @@ import subprocess
 from log import *
 time = 0
 ftime = 0
+
+db_log("DMZ authenticated with Spotify")
  
 script = 'curl -o new.json -d @location.json -H "Content-Type: application/json" http://www.mapquestapi.com/directions/v2/routematrix?key=8PtZTD2kqepePZgyZPkbfg7Q6EhkUvcP'
 
@@ -24,6 +26,7 @@ channel.queue_declare(queue='DMZ_genre', durable=True)
 
 #get time from Map API
 def on_request_route(ch, method, props, body):
+    db_log("DMZ received new route information from F.E")
     global time
     global ftime
     print(body)
@@ -36,11 +39,17 @@ def on_request_route(ch, method, props, body):
 
     time = data["time"]
 
-    ftime = ((time[1] / 60) / 3)
+    time = time[1]
 
-    pprint(time[1])
+    ftime = ((time / 60) / 3)
 
-    response = time[1]
+    if ftime == 0:
+        ftime = 1
+
+    print("Time: " + time)
+    print("Tracks: " + ftime)
+
+    response = time
 
     ch.basic_publish(exchange='',
                      routing_key=props.reply_to,
@@ -48,16 +57,20 @@ def on_request_route(ch, method, props, body):
                                                          props.correlation_id),
                      body=str(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    db_log("DMZ sent new route time to F.E")
 
 def on_request_saved(ch, method, props, saved):
+    db_log("DMZ received saved route time from F.E")
     global time
     global ftime
     time = saved
 
     ftime = ((int(time) / 60) / 3)
-    pprint(int(time))
-    pprint(ftime)
+    print("Time: " + int(time))
+    print("Tracks: " + ftime)
 
+    if ftime == 0:
+        ftime = 1
 
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -86,21 +99,24 @@ else:
 
 
 def on_request_genre(ch, method, props,stuff):
+    db_log("DMZ received genre and playlist name from F.E")
     global time
     global ftime
     stuff = stuff.split(",")
     genre = stuff[0]
     name = stuff[1]
     #get tracks and saves as resutls 
-    print(genre)
-    print(name)
+    print("Genre: " + genre)
+    print("Playlist name: " + name)
+    print(str(ftime))
     os.system('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit='+str(ftime)+'&market=US&seed_genres='+genre+'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer '+token+'"')
+
 
     batcmd="cat seed.json | grep 'spotify:track' | sed 's/    \"uri\" : \"//g' | sed 's/\"//g'"
     new = subprocess.check_output(batcmd, shell=True)
 
     results = new.split("\n")
-    print(results)
+    #print(results)
     results.pop()
     results = list(dict.fromkeys(results))
     #print(results)
@@ -121,7 +137,7 @@ def on_request_genre(ch, method, props,stuff):
     final = "https://open.spotify.com/playlist/" + da_info
 
     #print link
-    print(final)
+    print("Link" + final)
 
     response = final
 
@@ -131,39 +147,41 @@ def on_request_genre(ch, method, props,stuff):
                                                          props.correlation_id),
                      body=str(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
-    print("message sent")
+    print("Link Sent")
+    db_log("DMZ created new link and sent it to F.E")
     
     if genre == 'country':
-      da_country = 1
+        da_country = 1
     else:
-      da_country = 0
+        da_country = 0
 
     if genre == 'edm':
-      da_edm = 1
+        da_edm = 1
     else:
-      da_edm = 0
+        da_edm = 0
 
     if genre == 'hip-hop':
-      da_hiphop = 1
+        da_hiphop = 1
     else:
-      da_hiphop = 0
+        da_hiphop = 0
 
     if genre == 'pop':
-      da_pop = 1
+        da_pop = 1
     else:
-      da_pop = 0
+        da_pop = 0
 
     if genre == 'rock':
-      da_rock = 1
+        da_rock = 1
     else:
-      da_rock = 0
+        da_rock = 0
 
-    scoreboard = "{},{},{},{},{},{},{}".format(time[1], ftime, da_country, da_edm, da_hiphop, da_pop, da_rock)
+    scoreboard = "{},{},{},{},{},{},{}".format(time, ftime, da_country, da_edm, da_hiphop, da_pop, da_rock)
 
-    print (scoreboard)
+    print ("Scoreboard: " + scoreboard)
 
     channel.exchange_declare(exchange='DB_addScores', exchange_type='direct', durable=True)
     channel.basic_publish(exchange='DB_addScores', routing_key='', body=scoreboard)
+    db_log("DMZ sent scoreboard update to Database.")
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='DMZ_route', on_message_callback=on_request_route)
