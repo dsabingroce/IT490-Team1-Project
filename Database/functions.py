@@ -3,7 +3,7 @@ import pyodbc
 import pika
 import time
 
-#5-15: Connecting to Database
+#7-17: Connecting to Database
 details = {
  'server' : 'localhost',
  'database' : 'projectDB',
@@ -16,19 +16,19 @@ connect_string = 'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};PORT=
 
 connection = pyodbc.connect(connect_string)
 
-#18: Cursor runs queries and fetches rows
+#20: Cursor runs queries and fetches rows
 cursor = connection.cursor()
 
-
+#23-40: db_log writes a log to a local file both on the system and in a master file 
 def db_log(message):
-	#Write log to local file
+	#25-29: Writes log to local file
 	stamp = time.asctime( time.localtime(time.time()))
-	message = stamp + " -> " + message + "\n"
+	message = stamp + " -> " + message
 	
 	with open('./server_log', 'a') as log_file:
-		log_file.write(message)
+		log_file.write(message+"\n")
 	
-	#Send message to DB for logging
+	#32-40: Sends message to DB for logging
 	cred = pika.PlainCredentials('RMQ','RMQ_1234')
 
 	connection = pika.BlockingConnection(pika.ConnectionParameters('192.168.1.5', 5672, '/', cred))
@@ -39,7 +39,7 @@ def db_log(message):
 
 	connection.close()
 
-#21-33: Auth function used to see if a user's passwords match up
+#43-58: Auth function used to see if a user's passwords match up
 def auth(uName, pWord):
 	query="SELECT password FROM accounts WHERE username='"+uName+"'"
 	with cursor.execute(query):
@@ -52,66 +52,66 @@ def auth(uName, pWord):
 		else:
 			db_log("User failed to log in")				
 			return "false"
-	#32-33: If a username doesn't exist in the database, you get a type error if you try to put row[0] in a variable.	
+	#56-58: If a username doesn't exist in the database, you get a type error if you try to put row[0] in a variable.	
 	except TypeError:
 		db_log("User failed to log in")			
 		return "false"
 
-#36-51: addUser function adds a user's credentials into the database
+#61-78: addUser function adds a user's credentials into the database
 def addUser(username, password, fName, lName):
-	#38-41: Gets a count of the rows and adds one in order to create a primary key for the table
+	#63-66: Gets a count of the rows and adds one in order to create a primary key for the table
 	query1="SELECT COUNT(*) FROM accounts"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
 	count=row[0]+1
 	
-	#44-51: Inserts the user's row into the database
+	#69-78: Inserts the user's row into the database
 	query2="INSERT INTO accounts VALUES ("+str(count)+",'"+username+"','"+password+"','"+fName+"','"+lName+"','',0,0,0,0,0,0,0,',,',',,')"
 	try:
 		cursor.execute(query2)
 		connection.commit()
 		db_log("User "+username+" was created")			
 		return "true"
-	#50-51: If a username is already taken, it gives an intergrity error
+	#76-78: If a username is already taken, it gives an intergrity error
 	except pyodbc.IntegrityError:		
 		db_log("Failed to create new user")			
 		return "false"
 
-#54-66: addScores adds a user's scores to their account
+#81-95: addScores adds a user's scores to their account
 def addScores(user, timeTrav, songLis, country, edm, hiphop, pop, rock):
-	#56-57: Puts the new values into a dictionary to iterate through with the Select statement	
-	new=[timeTrav,songLis,country,edm,hiphop,pop,rock]	
+	#83-89: Puts the new values into a dictionary to iterate through with the Select statement	
+	new=[int(timeTrav),int(songLis),int(country),int(edm),int(hiphop),int(pop),int(rock)]	
 	query1="SELECT timeTraveled, songsListenedTo, country, edm, hiphop, pop, rock FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
-		#61-62: Adds the old scores with the new scores to put them back into the table		
+		#88-89: Adds the old scores with the new scores to put them back into the table		
 		for i in range(len(row)):
 			new[i]=new[i]+row[i]
-	#64-66: Updates the row with the new scores and commits them
+	#91-95: Updates the row with the new scores and commits them
 	query2="UPDATE accounts SET timeTraveled="+str(new[0])+", songsListenedTo="+str(new[1])+", country="+str(new[2])+", edm="+str(new[3])+", hiphop="+str(new[4])+", pop="+str(new[5])+", rock="+str(new[6])+" WHERE username='"+user+"'"
 	cursor.execute(query2)
 	connection.commit()
 	db_log("New scores added to "+user)	
 	return "true"
 
-#69-81: showScores sends the user's score values to the Front End
+#98-110: showScores sends the user's score values to the Front End
 def showScores(user):
 	resp=''	
-	#72-75: Query gets the values from the user's account
+	#101-110: Query gets the values from the user's account
 	query1="SELECT timeTraveled, songsListenedTo, country, edm, hiphop, pop, rock FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
 		#77-78: Adds the scores into a string seperated by commas	
 		for i in row:
 			resp=resp+","+str(i)
-	#79-81:Adds the username to the string and returns the whole string	
+	#108-110:Adds the username to the string and returns the whole string	
 	resp=user+resp
 	db_log("User "+user+" checked their scores")		
 	return resp
 
-#84-118: addFriend takes two usernames and updates the database to add each of those users in their friends column
+#113-150: addFriend takes two usernames and updates the database to add each of those users in their friends column
 def addFriend(user, friend):
-	#86-99: Fetches the current friends list and userID of both the user and the friend they want to add.	
+	#115-129: Fetches the current friends list and userID of both the user and the friend they want to add.	
 	query1="SELECT friends, userID FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
@@ -120,14 +120,14 @@ def addFriend(user, friend):
 	query2="SELECT friends, userID FROM accounts WHERE username='"+friend+"'"
 	with cursor.execute(query2):
 		row=cursor.fetchone()
-		#95-99: If the username put in does not exist, we get a TypeError		
+		#124-129: If the username put in does not exist, we get a TypeError		
 		try:		
 			currFriends2=str(row[0])	
 			useID2=str(row[1])
 		except TypeError:
 			db_log("User "+user+" failed to add friend")	
 			return "false"
-	#101-110: First checks if the friends are already added. Then adds the userID to each person's friends list
+	#130-141: First checks if the friends are already added. Then adds the userID to each person's friends list
 	if useID2 in currFriends1:	
 		db_log("User "+user+" failed to add friend")			
 		return "false"
@@ -139,7 +139,7 @@ def addFriend(user, friend):
 		newFriends2=useID1
 	else:
 		newFriends2=currFriends2+","+useID1	
-	#112-118: Updates the accounts with the new friends list
+	#143-150: Updates the accounts with the new friends list
 	query3="UPDATE accounts SET friends='"+newFriends1+"' WHERE username='"+user+"'"
 	cursor.execute(query3)
 	connection.commit()
@@ -149,15 +149,15 @@ def addFriend(user, friend):
 	db_log("User "+user+" added new friend "+friend)	
 	return "true"
 
-#121-141: showFriends gives the usernames of a person's friends
+#153-178: showFriends gives the usernames of a person's friends
 def showFriends(user):
-	#123-127: Gets the friends string from the account and convert it into a list
+	#155-159: Gets the friends string from the account and convert it into a list
 	query1="SELECT friends FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
 		friends=str(row[0])
 	friendList=friends.split(',')
-	#129-133: Iterates through the list to get the usernames and put them into the old list
+	#161-169: Iterates through the list to get the usernames and put them into the old list
 	try:	
 		for i in range(len(friendList)):
 			query="SELECT username FROM accounts WHERE userID='"+friendList[i]+"'"
@@ -167,7 +167,7 @@ def showFriends(user):
 	except TypeError:
 		db_log("User "+user+" checked his friends list")		
 		return 'No friends'
-	#135-141: Iterates though the list again to put the values into a string to send to the front end
+	#171-178: Iterates though the list again to put the values into a string to send to the front end
 	friendsShow=''	
 	for i in range(len(friendList)):
 		if friendsShow=='':
@@ -177,9 +177,9 @@ def showFriends(user):
 	db_log("User "+user+" checked his friends list")
 	return friendsShow
 
-#144-160: saveRoute takes the time of a user's favorite route and replaces the old one he first put in with the new one
+#181-198: saveRoute takes the time of a user's favorite route and replaces the old one he first put in with the new one
 def saveRoute(user, route):
-   	#146-154: Fetches the current faveRoute list and adds the new route to it and takes out the oldest		
+   	#183-191: Fetches the current faveRoute list and adds the new route to it and takes out the oldest		
 	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
@@ -189,7 +189,7 @@ def saveRoute(user, route):
 	currRoutes[0]=currRoutes[1]
 	currRoutes[1]=currRoutes[2]
 	currRoutes[2]=route
-	#156-160: Puts the newRoute list into the accounts table
+	#192-198: Puts the newRoute list into the accounts table
 	newRoute=currRoutes[0]+","+currRoutes[1]+","+currRoutes[2]
 	query2="UPDATE accounts SET faveRoute='"+newRoute+"' WHERE username='"+user+"'"
 	cursor.execute(query2)
@@ -197,20 +197,27 @@ def saveRoute(user, route):
 	db_log("User "+user+" saved a new route")	
 	return "true"
 
-#163-170: selectRoute returns a specific route based on which route the user wants
-def selectRoute(user, route):
-	#165-170: Gets the faveRoute list and selects which one based on the parameter route
+#201-207: showRoutes displays the routes for a specific user
+def showRoutes(user):
+	#203-207: Selects the routes from the DB and sends it back
 	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
-		currRoutes=str(row[0])
-	currRoutes=currRoutes.split(',')
 	db_log("User "+user+" checked his routes")	
-	return currRoutes[route]
+	return row[0]
 
-#173-189: savePlaylist takes the ID of a user's favorite playlist and replaces the old one he first put in with the new one
+#210-216: showPlaylists displays the playists for a specific user
+def showPlaylists(user):
+	#211-216: Selects the playlists from the DB and sends it back
+	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
+	with cursor.execute(query1):
+		row=cursor.fetchone()
+	db_log("User "+user+" checked his playlists")	
+	return row[0]
+
+#219-236: savePlaylist takes the ID of a user's favorite playlist and replaces the old one he first put in with the new one
 def savePlaylist(user, playlist):
-	#175-183: Fetches the current favePlaylist list and adds the new playlist to it and takes out the oldest		
+	#221-229: Fetches the current favePlaylist list and adds the new playlist to it and takes out the oldest		
 	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
 		row=cursor.fetchone()
@@ -220,7 +227,7 @@ def savePlaylist(user, playlist):
 	currPlaylists[0]=currPlaylists[1]
 	currPlaylists[1]=currPlaylists[2]
 	currPlaylists[2]=playlist
-	#185-189: Puts the newPlaylists list into the accounts table
+	#231-236: Puts the newPlaylists list into the accounts table
 	newPlaylists=currPlaylists[0]+","+currPlaylists[1]+","+currPlaylists[2]
 	query2="UPDATE accounts SET favePlaylist='"+newPlaylists+"' WHERE username='"+user+"'"
 	cursor.execute(query2)
@@ -228,25 +235,14 @@ def savePlaylist(user, playlist):
 	db_log("User "+user+" saved a new playlist")	
 	return "true"
 
-#192-199: selectPlaylist returns a specific playlist based on which playlist the user wants
-def selectPlaylist(user, playlist):
-	#165-170: Gets the favePlaylist list and selects which one based on the parameter playlist
-	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
-	with cursor.execute(query1):
-		row=cursor.fetchone()
-		currPlaylists=str(row[0])
-	currPlaylists=currPlaylists.split(',')
-	db_log("User "+user+" checked his playlists")	
-	return currPlaylists[playlist]
-
-#243-253: showMessages shows all the messages a user has ever received
+#239-252: showMessages shows all the messages a user has ever received
 def showMessages(user):
-	#245-248: Selects the users who sent the messages and the messages for a specific user
+	#241-252: Selects the users who sent the messages and the messages for a specific user
 	query1="SELECT toUser, fromUser, body FROM messages WHERE toUser='"+user+"' OR fromUser='"+user+"'"
 	resp=''	
 	with cursor.execute(query1):
 		row=cursor.fetchone()
-		#250-256: Adds the users and messages into a string that the Front End will receive				
+		#246-250: Adds the users and messages into a string that the Front End will receive				
 		if row==None:
 			return "No messages"		
 		while row:
@@ -255,14 +251,14 @@ def showMessages(user):
 	db_log("User "+user+" checked his messages")		
 	return resp
 
-#257-281: sendMessage sends a message to a user, simple enough
+#255-279: sendMessage sends a message to a user, simple enough
 def sendMessage(fromUser, toUser, message):
-	#259-261: Makes sure the user does not send a message to nobody
+	#257-259: Makes sure the user does not send a message to nobody
 	if toUser=="":
 		db_log("User "+fromUser+" failed to send a message")			
 		return "false"
 	else:	
-		#264-274: Checks to see if the username entered exists
+		#262-272: Checks to see if the username entered exists
 		users=''	
 		query1="SELECT username FROM accounts"
 		with cursor.execute(query1):
@@ -275,7 +271,7 @@ def sendMessage(fromUser, toUser, message):
 			db_log("User "+fromUser+" failed to send a message")			
 			return "false"
 		else:
-			#277-281: Enters the message into the database
+			#275-279: Enters the message into the database
 			query2="INSERT INTO messages (toUser, fromUser, body) VALUES (\'"+toUser+"\',\'"+fromUser+"\',\'"+message+"\')"
 			cursor.execute(query2)
 			connection.commit()
