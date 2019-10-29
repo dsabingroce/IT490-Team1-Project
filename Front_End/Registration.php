@@ -1,3 +1,9 @@
+<?php
+include "logs.php";
+log_db("User creates a new account.");
+
+?>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +25,10 @@ use PhpAmqpLib\Message\AMQPMessage;
 $fname = $_POST['firstName'];
 $lname = $_POST['lastName'];
 $username = $_POST['username'];
+
+
 $pass = $_POST['password'];
+
 
 /*
 $flag = true;
@@ -127,6 +136,9 @@ if ($response == "true"){
 	
 }
 
-
-
 ?>
+
+
+</div>
+</body>
+</html>
