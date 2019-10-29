@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main Menu</title>
+    <title>Enter new router</title>
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
@@ -39,6 +39,7 @@
             <tr>
                 <!--<td>Please enter State</td>-->
 		<td><input type="text" name="Origin_stateName" placeholder="Enter State"></td>
+<!--
 		<select>
 	<option value="AL">Alabama</option>
 	<option value="AK">Alaska</option>
@@ -93,12 +94,7 @@
 	<option value="WY">Wyoming</option>
 </select>	
 
-
-
-
-
-
-                <!--<td>
+               
                     <textarea name="Question" rows="6" cols="60"></textarea>
                 </td>
 		-->
@@ -160,11 +156,15 @@
         </table></center>
 	<br>
 	<br>
+	 <input type="checkbox" id="save_destination_box" name="save_destination_box" value="true">   
 
     </form>
 
      <td>save destination</td>
-     <input type="checkbox" id="save_destination" name="save">   
+    
+<br>
+<br>
+<input type="button" onclick="location.href='main_menu.html';"value='main menu' />
 
 </div>
 </main>
