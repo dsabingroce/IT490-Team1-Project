@@ -6,6 +6,7 @@ import os
 import json
 from pprint import pprint 
 import subprocess
+from log import *
 
 #spotify authentication
 cid ='d874f49748c84696b9015d3c3d1bbcae' # Client ID; copy this from your app 
@@ -40,7 +41,7 @@ results = list(dict.fromkeys(results))
 #print(results)
 
 #create playlist and saves as da_info
-name = "That good good 3000"
+name = "That good good 3001"
 
 sp.user_playlist_create(username, name, public=True)
 
@@ -60,3 +61,4 @@ final = "https://open.spotify.com/playlist/" + da_info
 
 #print link
 print(final)
+db_log("Final link was created.")
