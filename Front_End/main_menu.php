@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +20,8 @@
                 
 		<br>
                 
-                <input type="button" onclick="location.href='select_route.html';"value='Create new playlist' />
-		<input type="button" onclick="location.href='saved_playlist.html';"value='Go to saved playlist' />
+                <input type="button" onclick="location.href='select_route.php';"value='Create new playlist' />
+		<input type="button" onclick="location.href='saved_playlist.php';"value='Go to saved playlist' />
 		<input type="button" onclick="location.href='social.php';"value='Go to social' />
 		<input type="button" onclick="location.href='score_board.php';"value='Go to scoreboard' />
 		<br><br>
