@@ -101,7 +101,22 @@ $response = $rpc->call("");
       <!--  <h3 align="left">Add friend: </h3> -->
 	<table>
 	    <tr>
-		<h3 align="left">Current friends: <?php echo $response ?>;</h3>
+		<h3 align="left">Current friends: 
+		
+<?php 
+
+	if($_GET['status'] == "false"){
+		echo '<pre>';
+		echo "Invalid username. Please try again.\n";
+		echo "Current friends: "."$response";
+		echo '</pre>';
+	}
+	else{
+ 		echo $response; 
+	} 
+?>
+</h3>
+
 	     </tr>
 		<br>
 		<br>
@@ -121,7 +136,8 @@ $response = $rpc->call("");
 	<br>
 	<br>
 
-        <input type="button" onclick="location.href='main_menu.html';"value='back' />
+        <input type="button" onclick="location.href='main_menu.php';"value='Return to Main Menu' />
+<input type="button" onclick="location.href='view_messages.php';"value='View & Send Messages' />
 		</td> 
 		
             </tr> 
