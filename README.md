@@ -24,7 +24,7 @@ The DMZ's purpose in this structure is to be the application's gateway to the in
 The application uses the REST API to make queries to the third party MapQuest database to receive travel times.
 
 #### Spotify
-The Spotify API is accessed through the spotipy Python module. 
+The Spotify API is accessed through the spotipy Python module. The playlist generation is limited to 100 songs per list, or about 5 hours of music. This is due to the limitations of the API itself. 
 
 ### Front End Web Server
 This component for the application serves as the user interface. The front end is used to take input from the user and use it to send off requests to the other servers. That information is then received and presented back to the user.
