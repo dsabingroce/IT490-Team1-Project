@@ -175,7 +175,7 @@ if ($check_genre){
     $check_genre = "country";
     }
 
-$genre_check = ('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=3&market=US&seed_genres='.$check_genre.'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer BQC9kkxcMKi9aVVvr8RX6p7Q_AgY0TUZjueWp4YWclwUVEYXkh-eUKL03lUaLmvWIxXA6XOBmKL2DCHvlW5Lcl9h-rzs3ntGt2h2ts41Gpo4mGodl1ZCVC5CCKXjwL9QRY-wNCAIqhiNqf8QUNaBAsOvvlGevEW_B8BW7gBLuHmmRtk"');
+$genre_check = ('curl -o seed.json -X "GET" "https://api.spotify.com/v1/recommendations?limit=3&market=US&seed_genres='.$check_genre.'" -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer BQAJOm4rnh-AQA6FSYVQDOp4yz2R0vx1vk_buPemDsiYkD-eHh25luMIaVqXNuVm0jb2x_aRkU03p5DPILpoxgXwuasZbf7mdTtRByyKtQ5OYdMotbskXvN30dndCp3TJjjRU5-eisdbHXfDpFoZpQGYwLMOLizRIHWAaqYPzqBDPxU"');
 
 $rpc = new RpcClient();
 $response = $rpc->call("$genre_check");
