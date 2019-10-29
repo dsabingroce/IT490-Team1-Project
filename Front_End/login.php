@@ -1,5 +1,11 @@
 <?php
-header('Location: main_menu.html');
+session_start();
+
+include "logs.php";
+log_db("User logins into Travel Tunes website.");
+
+
+header('Location: main_menu.php');
 
 require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -89,9 +95,11 @@ echo $response;
 #echo ' [.] Got ', $response, "\n";
 
 if ($response == "true"){
-    header("Location: main_menu.html");
+	$_SESSION['logged_in'] = true;
+    header("Location: main_menu.php");
 }
 else{
+	$_SESSION['logged_in'] = false;
 	header("Location: index.html");
 	echo "Wrong username or password. Please try again.";
 }
