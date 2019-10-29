@@ -19,6 +19,7 @@ connection=pika.BlockingConnection(pika.ConnectionParameters('192.168.1.5', 5672
 channel = connection.channel()
 
 channel.queue_declare(queue='DMZ_route', durable=True)
+channel.queue_declare(queue='DMZ_saved', durable=True)
 channel.queue_declare(queue='DMZ_genre', durable=True)
 
 #get time from Map API
@@ -48,6 +49,19 @@ def on_request_route(ch, method, props, body):
                      body=str(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
+def on_request_saved(ch, method, props, saved):
+    global time
+    global ftime
+    time = saved
+
+    ftime = ((int(time) / 60) / 3)
+    pprint(int(time))
+    pprint(ftime)
+
+
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
 
 #spotify authentication
 cid ='d874f49748c84696b9015d3c3d1bbcae' # Client ID; copy this from your app 
@@ -68,6 +82,8 @@ if token:
     sp = spotipy.Spotify(auth=token)
 else:
     print("Can't get token for", username)
+
+
 
 def on_request_genre(ch, method, props,stuff):
     global time
@@ -152,6 +168,7 @@ def on_request_genre(ch, method, props,stuff):
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='DMZ_route', on_message_callback=on_request_route)
 channel.basic_consume(queue='DMZ_genre', on_message_callback=on_request_genre)
+channel.basic_consume(queue='DMZ_saved', on_message_callback=on_request_saved)
 
 print(" [x] Awaiting Route Time Calculations RPC requests")
 channel.start_consuming()
