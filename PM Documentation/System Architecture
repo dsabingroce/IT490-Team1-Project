@@ -1,0 +1,5 @@
+System Architecture:
+
+Rabit MQ 	→ 	UI → User
+          →   DB 
+          →   DMZ → Internet (API)
