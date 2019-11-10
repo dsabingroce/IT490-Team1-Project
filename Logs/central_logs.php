@@ -28,4 +28,7 @@ $channel->basic_consume('DB_logs', '', false, true, false, false, $callback);
 while ($channel->is_consuming()) {
   	$channel->wait();
 }
+
+//This is a test comment for the git push
+
 ?>
