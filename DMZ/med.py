@@ -8,6 +8,9 @@ from pprint import pprint
 import subprocess
 from log import *
 
+
+#hello!
+
 #spotify authentication
 cid ='d874f49748c84696b9015d3c3d1bbcae' # Client ID; copy this from your app 
 secret = 'ba49882c11ff438592008d35c3add538' # Client Secret; copy this from your app
