@@ -139,3 +139,5 @@ channel.basic_consume(queue='DB_showPlaylists', on_message_callback=showPlaylist
 	
 db_log("Database server started")
 channel.start_consuming()
+
+#This is a test comment for devvelopment
