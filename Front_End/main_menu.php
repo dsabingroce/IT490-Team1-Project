@@ -11,7 +11,7 @@ session_start();
 </head>
 <body>
 <main>
-   
+	<!-- This is a test to push to github-->    
         <div class="Square">
 
         <center><h1>Menu page</h1>
