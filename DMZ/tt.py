@@ -46,8 +46,8 @@ def on_request_route(ch, method, props, body):
     if ftime == 0:
         ftime = 1
 
-    print("Time: " + time)
-    print("Tracks: " + ftime)
+    print("Time: " + str(time))
+    print("Tracks: " + str(ftime))
 
     response = time
 
@@ -66,8 +66,8 @@ def on_request_saved(ch, method, props, saved):
     time = saved
 
     ftime = ((int(time) / 60) / 3)
-    print("Time: " + int(time))
-    print("Tracks: " + ftime)
+    print("Time: " + str(time))
+    print("Tracks: " + str(ftime))
 
     if ftime == 0:
         ftime = 1
@@ -137,7 +137,7 @@ def on_request_genre(ch, method, props,stuff):
     final = "https://open.spotify.com/playlist/" + da_info
 
     #print link
-    print("Link" + final)
+    print("Link: " + final)
 
     response = final
 
