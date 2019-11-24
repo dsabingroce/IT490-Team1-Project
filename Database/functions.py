@@ -278,3 +278,11 @@ def sendMessage(fromUser, toUser, message):
 			connection.commit()
 			db_log("User "+fromUser+" sent a message to "+toUser)			
 			return 'true'
+	
+def recovery(recover):
+	recover=recover.split("END")
+	for i in recover:
+		if i=="":
+			continue
+		cursor.execute(str(i))
+		connection.commit()
