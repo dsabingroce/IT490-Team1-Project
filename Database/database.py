@@ -21,6 +21,9 @@ channel.queue_declare(queue='DB_showMessages', durable=True)
 channel.queue_declare(queue='DB_sendMessage', durable=True)
 channel.queue_declare(queue='DB_showRoutes', durable=True)
 channel.queue_declare(queue='DB_showPlaylists', durable=True)
+channel.queue_declare(queue='DB_sharePlaylist', durable=True)
+channel.queue_declare(queue='DB_ping', durable=True)
+channel.queue_declare(queue='DB_recovery', durable=True)
 
 #26: Keeps tracks of the user logged in currently
 user=''
@@ -122,6 +125,20 @@ def showPlaylists_request(ch, method, props, body):
 	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
+def sharePlaylist_request(ch, method, props, body):
+	global user
+	body=body.split(",")
+	reponse=sendMessage(user, body[0], body[1])
+	ch.basic_ack(delivery_tag=method.delivery_tag)
+
+def ping_request(ch, method, props, body):
+	ch.basic_ack(delivery_tag=method.delivery_tag)
+
+def recovery_request(ch, method, props, body):
+	recovery(body)
+	db_log("Recovery initiated")
+	ch.basic_ack(delivery_tag=method.delivery_tag)
+
 #126-142: Begins to listen on each queue and logs that the server has started.
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue='DB_auth', on_message_callback=auth_request)
@@ -136,8 +153,9 @@ channel.basic_consume(queue='DB_showMessages', on_message_callback=showMessages_
 channel.basic_consume(queue='DB_sendMessage', on_message_callback=sendMessage_request)
 channel.basic_consume(queue='DB_showRoutes', on_message_callback=showRoutes_request)
 channel.basic_consume(queue='DB_showPlaylists', on_message_callback=showPlaylists_request)
+channel.basic_consume(queue='DB_sharePlaylist', on_message_callback=sharePlaylist_request)
+channel.basic_consume(queue='DB_ping', on_message_callback=ping_request)
+channel.basic_consume(queue='DB_recovery', on_message_callback=recovery_request)
 	
 db_log("Database server started")
 channel.start_consuming()
-
-#This is a second test comment for pushing and pulling
