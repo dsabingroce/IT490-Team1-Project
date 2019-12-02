@@ -85,7 +85,7 @@ def addScores_request(ch, method, props, body):
 	response = addScores_DBB(user, timeTrav, songLis, country, edm, hiphop, pop, rock)
 	if disaster==True:
 		global recovery
-		recovery=recovery+","+response
+		recovery=recovery+"END"+response
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #64-68: Sends the user's scores to the FE
@@ -101,63 +101,75 @@ def addFriend_request(ch, method, props, body):
 	global user	
 	response = addFriend_DBB(user, body)
 	if disaster==True:		
-		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response.split(",")[0]))
+		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response.split("END")[0]))
 		global recovery
-		recovery=recovery+","+response.split(",")[1]+","+response.split(",")[2]
+		recovery=recovery+","+response.split("END")[1]+","+response.split("END")[2]
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #78-82: Sends the user's friends to the FE
 def showFriends_request(ch, method, props, body):
 	global user	
-	response = showFriends(user)
-	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	response = showFriends_DBB(user)
+	if disaster==True:
+		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #85-88: Takes a route length and saves it for a user
 def saveRoute_request(ch, method, props, body):
 	global user	
-	response = saveRoute(user, body)
+	response = saveRoute_DBB(user, body)
+	if disaster==True:
+		recovery=recovery+"END"+response.split("END")[1]
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #91-94: Takes a playlist link and saves it to the user's account
 def savePlaylist_request(ch, method, props, body):
 	global user	
-	response = savePlaylist(user, body)
+	response = savePlaylist_DBB(user, body)
+	if disaster==True:
+		recovery=recovery+"END"+response.split("END")[1]
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #97-101: Sends all the messages a user has send and received to the front end.
 def showMessages_request(ch, method, props, body):
 	global user	
-	response = showMessages(user)
-	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	response = showMessages_DBB(user)
+	if disaster==True:
+		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #104-109: Saves a message for a user to see when they log in
 def sendMessage_request(ch, method, props, body):
 	global user	
 	body=body.split("STARTOFMESSAGE")
-	response = sendMessage(user, body[0], body[1])
-	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	response = sendMessage_DBB(user, body[0], body[1])
+	if disaster==True:
+		recovery=recovery+"END"+response.split("END")[1]
+		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response.split("END")[0]))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #112-116: Sends the FE all the routes a user has saved
 def showRoutes_request(ch, method, props, body):
 	global user	
-	response = showRoutes(user)
-	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	response = showRoutes_DBB(user)
+	if disaster==True:
+		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #119-123: Sends the FE all the playlists a user has saved
 def showPlaylists_request(ch, method, props, body):
 	global user	
-	response = showPlaylists(user)
-	ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
+	response = showPlaylists_DBB(user)
+	if disaster==True:
+		ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=str(response))
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def sharePlaylist_request(ch, method, props, body):
 	global user
 	body=body.split(",")
-	reponse=sendMessage(user, body[0], body[1])
+	response=sendMessage_DBB(user, body[0], body[1])
+	if disaster==True:
+		recovery=recovery+"END"+response.split("END")[1]
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def ack(ch, method, props, body):
