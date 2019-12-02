@@ -151,10 +151,10 @@ def addFriend_DBB(user, friend):
 	cursor.execute(query4)
 	connection.commit()
 	db_log("User "+user+" added new friend "+friend)	
-	return "true,"+query3+","+query4
+	return "trueEND"+query3+"END"+query4
 
 #154-179: showFriends gives the usernames of a person's friends
-def showFriends(user):
+def showFriends_DBB(user):
 	#156-160: Gets the friends string from the account and convert it into a list
 	query1="SELECT friends FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
@@ -182,7 +182,7 @@ def showFriends(user):
 	return friendsShow
 
 #182-199: saveRoute takes the time of a user's favorite route and replaces the old one he first put in with the new one
-def saveRoute(user, route):
+def saveRoute_DBB(user, route):
    	#184-192: Fetches the current faveRoute list and adds the new route to it and takes out the oldest		
 	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
@@ -199,10 +199,10 @@ def saveRoute(user, route):
 	cursor.execute(query2)
 	connection.commit()
 	db_log("User "+user+" saved a new route")	
-	return "true"
+	return "trueEND"+query2
 
 #202-208: showRoutes displays the routes for a specific user
-def showRoutes(user):
+def showRoutes_DBB(user):
 	#204-208: Selects the routes from the DB and sends it back
 	query1="SELECT faveRoute FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
@@ -211,7 +211,7 @@ def showRoutes(user):
 	return row[0]
 
 #211-217: showPlaylists displays the playists for a specific user
-def showPlaylists(user):
+def showPlaylists_DBB(user):
 	#213-217: Selects the playlists from the DB and sends it back
 	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
@@ -220,7 +220,7 @@ def showPlaylists(user):
 	return row[0]
 
 #220-237: savePlaylist takes the ID of a user's favorite playlist and replaces the old one he first put in with the new one
-def savePlaylist(user, playlist):
+def savePlaylist_DBB(user, playlist):
 	#222-230: Fetches the current favePlaylist list and adds the new playlist to it and takes out the oldest		
 	query1="SELECT favePlaylist FROM accounts WHERE username='"+user+"'"
 	with cursor.execute(query1):
@@ -237,10 +237,10 @@ def savePlaylist(user, playlist):
 	cursor.execute(query2)
 	connection.commit()
 	db_log("User "+user+" saved a new playlist")	
-	return "true"
+	return "trueEND"+query2
 
 #240-253: showMessages shows all the messages a user has ever received
-def showMessages(user):
+def showMessages_DBB(user):
 	#242-253: Selects the users who sent the messages and the messages for a specific user
 	query1="SELECT toUser, fromUser, body FROM messages WHERE toUser='"+user+"' OR fromUser='"+user+"'"
 	resp=''	
@@ -256,7 +256,7 @@ def showMessages(user):
 	return resp
 
 #256-280: sendMessage sends a message to a user, simple enough
-def sendMessage(fromUser, toUser, message):
+def sendMessage_DBB(fromUser, toUser, message):
 	#258-260: Makes sure the user does not send a message to nobody
 	if toUser=="":
 		db_log("User "+fromUser+" failed to send a message")			
@@ -280,5 +280,5 @@ def sendMessage(fromUser, toUser, message):
 			cursor.execute(query2)
 			connection.commit()
 			db_log("User "+fromUser+" sent a message to "+toUser)			
-			return 'true'
+			return 'trueEND'+query2
 	
