@@ -70,7 +70,8 @@ class RpcClient
                 'reply_to' => $this->callback_queue
             )
         );
-        $this->channel->basic_publish($msg, '', "DB_showRoutes");
+  //      $this->channel->basic_publish($msg, '', "DB_showRoutes");
+		$this->channel->basic_publish($msg, 'DB_showRoutes', "");
         while (!$this->response) {
             $this->channel->wait();
         }
