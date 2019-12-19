@@ -76,7 +76,8 @@ class RpcClient
                 'reply_to' => $this->callback_queue
             )
         );
-        $this->channel->basic_publish($msg, '', "DB_showScores");
+      //  $this->channel->basic_publish($msg, '', "DB_showScores");
+		$this->channel->basic_publish($msg, 'DB_showScores', "");
         while (!$this->response) {
             $this->channel->wait();
         }
