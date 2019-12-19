@@ -109,7 +109,8 @@ class RpcClient
                 'reply_to' => $this->callback_queue
             )
         );
-        $this->channel->basic_publish($msg, '', 'DMZ_route');
+   //     $this->channel->basic_publish($msg, '', 'DMZ_route');
+		$this->channel->basic_publish($msg, 'DMZ_route', '');
         while (!$this->response) {
             $this->channel->wait();
         }
