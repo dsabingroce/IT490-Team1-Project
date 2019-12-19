@@ -81,7 +81,8 @@ class RpcClient
                 'reply_to' => $this->callback_queue
             )
         );
-        $this->channel->basic_publish($msg, '', 'DB_auth');
+      //  $this->channel->basic_publish($msg, '', 'DB_auth');
+		$this->channel->basic_publish($msg, 'DB_auth', '');
         while (!$this->response) {
             $this->channel->wait();
         }
@@ -89,8 +90,14 @@ class RpcClient
     }
 }
 
+
+$options = [ 'salt' => 'salty_melee12345678901' ];
+$hashed_password = password_hash($pass, PASSWORD_BCRYPT, $options);
+
 $rpc = new RpcClient();
-$response = $rpc->call("$user,$pass");
+#$response = $rpc->call("$user,$pass");
+$response = $rpc->call("$user,$hashed_password");
+
 echo $response;
 #echo ' [.] Got ', $response, "\n";
 
