@@ -164,7 +164,7 @@
     
 <br>
 <br>
-<input type="button" onclick="location.href='main_menu.html';"value='main menu' />
+<input type="button" onclick="location.href='main_menu.php';"value='main menu' />
 
 </div>
 </main>
