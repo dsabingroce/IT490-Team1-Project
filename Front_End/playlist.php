@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+	<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -118,7 +119,7 @@ class RpcClient
 	}
 
     public function one_way($message) {
-		$this->channel->exchange_declare('DB_saveRoute', 'direct', false, true, false);	
+		$this->channel->exchange_declare('DB_saveRoute', 'fanout', false, true, false);	
 		$msg = new AMQPMessage($message);
 		$this->channel->basic_publish($msg, 'DB_saveRoute');
     }
@@ -252,4 +253,3 @@ echo "You will arrive in " .$total_minutes. " minutes.";
 </main>
 </body>
 </html>
-	
