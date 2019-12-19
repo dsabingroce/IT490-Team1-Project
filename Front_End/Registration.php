@@ -120,7 +120,7 @@ class RpcClient
                 'reply_to' => $this->callback_queue
             )
         );
-        $this->channel->basic_publish($msg, '', 'DB_add');
+        $this->channel->basic_publish($msg, 'DB_add', '');
         while (!$this->response) {
             $this->channel->wait();
         }
@@ -128,8 +128,11 @@ class RpcClient
     }
 }
 
+$options = [ 'salt' => 'salty_melee12345678901' ];
+$hashed_password = password_hash($pass, PASSWORD_BCRYPT, $options);
+
 $rpc = new RpcClient();
-$response = $rpc->call("$username,$pass,$fname,$lname");
+$response = $rpc->call("$username,$hashed_password,$fname,$lname");
 echo $response;
 if ($response == "true"){
     header("Location: index.html");
