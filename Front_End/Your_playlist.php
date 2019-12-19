@@ -14,7 +14,9 @@
 
 
 <?php
-	$saved_playlist_box = $_POST['saved_playlist_box'];
+	if (isset($_POST['saved_playlist_box'])) {
+		$saved_playlist_box = $_POST['saved_playlist_box'];
+	}	
 	$name_of_playlist = $_POST['name_of_playlist'];
 	
 /*
@@ -106,7 +108,7 @@ class RpcClient
     }
 
 	public function one_way($message) {
-		$this->channel->exchange_declare('DB_savePlaylist', 'direct', false, true, false);	
+		$this->channel->exchange_declare('DB_savePlaylist', 'fanout', false, true, false);	
 		$msg = new AMQPMessage($message);
 		$this->channel->basic_publish($msg, 'DB_savePlaylist');
     }
@@ -124,7 +126,8 @@ class RpcClient
             )
         );
         $this->channel->basic_publish($msg, '', 'DMZ_genre');
-        
+    //    $this->channel->basic_publish($msg, 'DMZ_genre', '');
+
 	while (!$this->response) {
             $this->channel->wait();
         }
