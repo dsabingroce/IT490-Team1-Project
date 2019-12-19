@@ -54,7 +54,7 @@ This pages displays all the three most recent routes that the user had chose to 
 After selecting a route, the user is prompted to select a genre. This genre will then be used when generating a playlist. In similar fashion to saving favorite routes, the user can do the same with playlists that are generated.
 
 ##### Saved Playlists
-This page will display the three most recent playlists that were saved by the user. These playlists will appear in the form of links that lead to the playlist in spotify. 
+This page will display the three most recent playlists that were saved by the user. These playlists will appear in the form of links that lead to the playlist in spotify. <br/> 
 
 
 ## Architecture
