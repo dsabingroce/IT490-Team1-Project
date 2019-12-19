@@ -78,7 +78,8 @@ class RpcClient
                 'reply_to' => $this->callback_queue
             )
         );
-        $this->channel->basic_publish($msg, '', "DB_showFriends");
+     //   $this->channel->basic_publish($msg, '', "DB_showFriends");
+		$this->channel->basic_publish($msg, 'DB_showFriends', "");
         while (!$this->response) {
             $this->channel->wait();
         }
