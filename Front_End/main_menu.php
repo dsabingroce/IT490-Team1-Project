@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+if (! $_SESSION['logged_in']) {
+	header("Location: index.html");
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -11,10 +16,10 @@ session_start();
 </head>
 <body>
 <main>
-	<!-- This is a test to push to github-->    
+   
         <div class="Square">
 
-        <center><h1>Menu page</h1>
+        <center><h1>Final Exam page</h1>
 		<h2>What would you like to do?</h2>
             <form action ="Registration.php" method="post">
                 
